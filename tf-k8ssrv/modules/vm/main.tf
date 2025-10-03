@@ -226,12 +226,12 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "remote-exec" {
-    inline = split("\n", trimspace(templatefile("${path.module}/scripts/provision/ansible-pull-setup.tpl", {
+    inline = compact(split("\n", trimspace(templatefile("${path.module}/scripts/provision/ansible-pull-setup.tpl", {
       ansible_oncalendar   = var.ansible_oncalendar,
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,
       ansible_playbook_path = local.ansible_playbook_path
-    })))
+    }))))
 
     connection {
       type        = "ssh"

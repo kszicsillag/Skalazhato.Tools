@@ -95,7 +95,7 @@ EOT
 variable "ansible_oncalendar" {
   type        = string
   description = "systemd OnCalendar schedule string for ansible-pull (e.g. 'hourly', 'daily', or a full OnCalendar expression). If empty, defaults to 'hourly'."
-  default     = ""
+  default     = "hourly"
 }
 
 variable "key_vault_name" {
