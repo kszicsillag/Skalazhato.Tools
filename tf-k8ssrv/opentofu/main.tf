@@ -24,6 +24,7 @@ module "vm" {
   vm_size             = var.vm_size
   admin_username      = var.admin_username
   ssh_public_key      = data.azurerm_key_vault_secret.ssh_pubkey_data.value
+  image_urn           = var.image_urn
   tags                = var.tags
   allowed_cidr        = var.allowed_cidr
   shutdown_daily_recurrence_time = var.shutdown_daily_recurrence_time

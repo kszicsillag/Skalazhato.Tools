@@ -6,6 +6,10 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+locals {
+  image_parts = var.image_urn != "" ? split(":", var.image_urn) : []
+}
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.vm_name}-vnet"
   address_space       = ["10.0.0.0/16"]
@@ -99,11 +103,26 @@ resource "azurerm_linux_virtual_machine" "vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "24_04-lts"
-    version   = "latest"
+  # Support passing a full URN (publisher:offer:sku:version). If image_urn is empty use the default Ubuntu 24.04 LTS.
+  dynamic "source_image_reference" {
+    for_each = var.image_urn != "" ? [1] : []
+    content {
+      publisher = local.image_parts[0]
+      offer     = local.image_parts[1]
+      sku       = local.image_parts[2]
+      version   = local.image_parts[3]
+    }
+  }
+
+  # Default image when no URN provided
+  dynamic "default_image_reference" {
+    for_each = var.image_urn == "" ? [1] : []
+    content {
+      publisher = "Canonical"
+      offer     = "UbuntuServer"
+      sku       = "24_04-lts"
+      version   = "latest"
+    }
   }
 
   tags = var.tags

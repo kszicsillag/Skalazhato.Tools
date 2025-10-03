@@ -50,5 +50,21 @@ variable "shutdown_daily_recurrence_time" {
   default     = "0100"
 }
 
+variable "image_urn" {
+  type        = string
+  description = "Optional image URN in the form publisher:offer:sku:version. If provided, module will use it to set source_image_reference."
+  default     = ""
+}
+
+// Validate URN format if provided
+variable "_image_urn_validation" {
+  type    = any
+  default = null
+  validation {
+    condition     = var.image_urn == "" || length(split(":", var.image_urn)) == 4
+    error_message = "image_urn must be empty or in the form publisher:offer:sku:version"
+  }
+}
+
 
 

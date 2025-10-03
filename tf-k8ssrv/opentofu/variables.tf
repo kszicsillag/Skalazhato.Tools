@@ -21,6 +21,12 @@ variable "vm_size" {
   default     = "Standard_D2als_v6"
 }
 
+variable "image_urn" {
+  type        = string
+  description = "Optional image URN in the form publisher:offer:sku:version. Defaults to Canonical Ubuntu 24.04 LTS."
+  default     = "Canonical:UbuntuServer:24_04-lts:latest"
+}
+
 variable "admin_username" {
   type        = string
   description = "Admin username for the VM"
