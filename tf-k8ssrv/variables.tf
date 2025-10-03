@@ -18,7 +18,7 @@ variable "vm_size" {
 variable "image_urn" {
   type        = string
   description = "Optional image URN in the form publisher:offer:sku:version. Defaults to Canonical Ubuntu 24.04 LTS."
-  default     = "Canonical:UbuntuServer:24_04-lts:latest"
+  default     = "Canonical:ubuntu-24_04-lts:server:latest"
 }
 
 variable "admin_username" {

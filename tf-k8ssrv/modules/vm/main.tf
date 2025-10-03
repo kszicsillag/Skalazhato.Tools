@@ -131,12 +131,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
 }
 
 resource "azurerm_virtual_machine_extension" "aadlogin" {
-  name                 = "AADLoginForLinux"
+  name                 = "AADSSHLoginForLinux"
   virtual_machine_id   = azurerm_linux_virtual_machine.vm.id
   publisher            = "Microsoft.Azure.ActiveDirectory"
-  type                 = "AADLoginForLinux"
-  type_handler_version = "1.0"
+  type                 = "AADSSHLoginForLinux"
+  type_handler_version = "1.0.3162.1"
 
+  // The extension does not require custom settings for default behaviour
   settings = jsonencode({})
 
   protected_settings = jsonencode({})
