@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # Rendered ansible-pull runner script
-ANSIBLE_REPO='${ansible_repo}'
-ANSIBLE_BRANCH='${ansible_branch}'
-ANSIBLE_PLAYBOOK='${ansible_playbook_path}'
+ANSIBLE_REPO='${ANSIBLE_REPO}'
+ANSIBLE_BRANCH='${ANSIBLE_BRANCH}'
+ANSIBLE_PLAYBOOK='${ANSIBLE_PLAYBOOK}'
 
 LOGFILE='/var/log/ansible-pull.log'
 

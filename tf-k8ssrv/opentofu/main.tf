@@ -28,7 +28,7 @@ module "vm" {
   enable_ansible_pull = var.enable_ansible_pull
   ansible_playbook_url = var.ansible_playbook_url
   ssh_private_key     = tls_private_key.generated_ssh.private_key_pem
-  ansible_pull_cron   = var.ansible_pull_cron
+  ansible_oncalendar  = var.ansible_oncalendar
   tags                = var.tags
   allowed_cidr        = var.allowed_cidr
   shutdown_daily_recurrence_time = var.shutdown_daily_recurrence_time

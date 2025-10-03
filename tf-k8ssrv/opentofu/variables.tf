@@ -79,8 +79,8 @@ EOT
 }
 
 
-variable "ansible_pull_cron" {
+variable "ansible_oncalendar" {
   type        = string
-  description = "Cron schedule expression for ansible-pull, e.g. '0 * * * *' for hourly."
-  default     = "0 * * * *"
+  description = "systemd OnCalendar schedule string for ansible-pull (e.g. 'hourly', 'daily', or a full OnCalendar expression). If empty, defaults to 'hourly'."
+  default     = ""
 }
