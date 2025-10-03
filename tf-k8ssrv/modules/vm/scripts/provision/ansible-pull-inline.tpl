@@ -1,7 +1,7 @@
+```plaintext
 
 # Install ansible, move rendered files into place and enable timer
-# If Terraform (remote-exec) runs this via /bin/sh (dash) it doesn't support
-# "set -o pipefail". Re-exec under bash if available so pipefail works.
+# Ensure we're running under bash so 'set -o pipefail' is supported
 if [ -z "$${BASH_VERSION:-}" ]; then
 	if command -v bash >/dev/null 2>&1; then
 		exec bash "$0" "$@"
@@ -22,3 +22,5 @@ sudo mv /tmp/ansible-pull.timer /etc/systemd/system/ansible-pull.timer
 sudo chmod 0755 /usr/local/bin/ansible-pull-runner.sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now ansible-pull.timer
+
+```
