@@ -135,7 +135,8 @@ resource "azurerm_virtual_machine_extension" "aadlogin" {
   virtual_machine_id   = azurerm_linux_virtual_machine.vm.id
   publisher            = "Microsoft.Azure.ActiveDirectory"
   type                 = "AADSSHLoginForLinux"
-  type_handler_version = "1.0.3162.1"
+  // Use the major.minor handler version (provider will resolve to the appropriate patch release available in the region)
+  type_handler_version = "1.0"
 
   // The extension does not require custom settings for default behaviour
   settings = jsonencode({})

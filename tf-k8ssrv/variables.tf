@@ -66,7 +66,7 @@ variable "shutdown_time_zone" {
 variable "enable_ansible_pull" {
   type        = bool
   description = "Enable ansible-pull provisioning on created VMs (default false)."
-  default     = false
+  default     = true
 }
 
 
