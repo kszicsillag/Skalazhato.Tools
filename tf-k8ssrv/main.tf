@@ -50,7 +50,7 @@ resource "tls_private_key" "generated_ssh" {
 }
 
 resource "azurerm_key_vault" "generic_kv" {
-  name                        = "kvau-${var.vm_base_name}"
+  name                        = var.key_vault_name != "" ? var.key_vault_name : "kvau-${var.vm_base_name}"
   location                    = azurerm_resource_group.generic_rg.location
   resource_group_name         = azurerm_resource_group.generic_rg.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id

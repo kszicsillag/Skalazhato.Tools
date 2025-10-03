@@ -88,12 +88,18 @@ Examples:
 
 Branch and playbook_path are optional. If omitted, branch defaults to 'main' and playbook defaults to 'site.yml'.
 EOT
-  default     = ""
+  default     = "https://github.com/kszicsillag/Skalazhato.Tools#main#ansible/k3s/site.yml"
 }
 
 
 variable "ansible_oncalendar" {
   type        = string
   description = "systemd OnCalendar schedule string for ansible-pull (e.g. 'hourly', 'daily', or a full OnCalendar expression). If empty, defaults to 'hourly'."
+  default     = ""
+}
+
+variable "key_vault_name" {
+  type        = string
+  description = "Optional name of the Key Vault to use for storing/retrieving shared secrets. If empty, a name will be generated using the VM base name (kvau-<vm_base_name>)."
   default     = ""
 }
