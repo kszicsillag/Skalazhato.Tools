@@ -16,7 +16,7 @@ Example variables (can be passed via ansible-pull extra-vars or rendered in your
 - k3s_role: "server"
 - k3s_version: "latest"         # or an explicit version like 'v1.27.4+k3s1'
 - k3s_channel: "stable"
-- k3s_token: "<pre-shared-token>"   # required for agents; recommended to set for servers too
+- k3s_token: "<pre-shared-token>"   # optional for single-node installs
 - k3s_server_url: "https://1.2.3.4:6443"  # required for agents
 
 Notes
