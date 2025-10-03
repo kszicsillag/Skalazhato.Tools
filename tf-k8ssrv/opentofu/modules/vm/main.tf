@@ -188,7 +188,7 @@ resource "null_resource" "ansible_pull" {
   depends_on = [azurerm_linux_virtual_machine.vm, azurerm_public_ip.vm_public_ip]
 
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/runner.sh.tpl", {
+    content     = templatefile("${path.module}/scripts/bin/ansible-pull-runner.sh.tpl", {
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,
       ansible_playbook_path = local.ansible_playbook_path
@@ -231,7 +231,7 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "remote-exec" {
-    inline = split("\n", trim(templatefile("${path.module}/scripts/provision/ansible-pull-inline.tpl", {
+    inline = split("\n", trim(templatefile("${path.module}/scripts/provision/ansible-pull-setup.tpl", {
       ansible_oncalendar   = var.ansible_oncalendar,
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,
