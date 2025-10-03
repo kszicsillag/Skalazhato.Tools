@@ -6,7 +6,7 @@ data "azurerm_client_config" "current" {}
 
 // Ensure principals is a map of friendly_id => principal_object_id
 locals {
-  principals_map = length(var.principal_ids) > 0 ? var.principal_ids : { self = data.azurerm_client_config.current.object_id }
+  principals_map = length(var.principal_ids) > 0 ? var.principal_ids : { (var.default_principal_friendly_id) = data.azurerm_client_config.current.object_id }
 }
 
 // Instantiate the vm module once per principal id. Each module creates its own resource group.

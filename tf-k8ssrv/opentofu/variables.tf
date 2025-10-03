@@ -45,6 +45,12 @@ variable "principal_ids" {
   default     = {}
 }
 
+variable "default_principal_friendly_id" {
+  type        = string
+  description = "Friendly id key to use as the default when `principal_ids` is empty. Example: 'self' or 'admin'"
+  default     = "000000"
+}
+
 variable "shutdown_daily_recurrence_time" {
   type        = string
   description = "Daily recurrence time for auto-shutdown in HHmm format, e.g. '0100'"
