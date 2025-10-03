@@ -188,8 +188,38 @@ resource "null_resource" "ansible_pull" {
   depends_on = [azurerm_linux_virtual_machine.vm, azurerm_public_ip.vm_public_ip]
 
   provisioner "file" {
-    source      = "${path.module}/scripts"
-    destination = "/tmp/tf-scripts"
+    content     = templatefile("${path.module}/scripts/ansible-pull-runner.tpl", {
+      ansible_repo         = local.ansible_repo,
+      ansible_branch       = local.ansible_branch,
+      ansible_playbook_path = local.ansible_playbook_path
+    })
+    destination = "/tmp/ansible-pull-runner.sh"
+
+    connection {
+      type        = "ssh"
+      host        = azurerm_public_ip.vm_public_ip.ip_address
+      user        = var.admin_username
+      private_key = var.ssh_private_key
+      timeout     = "2m"
+    }
+  }
+
+  provisioner "file" {
+    content     = templatefile("${path.module}/scripts/ansible-pull-service.tpl", {})
+    destination = "/tmp/ansible-pull.service"
+
+    connection {
+      type        = "ssh"
+      host        = azurerm_public_ip.vm_public_ip.ip_address
+      user        = var.admin_username
+      private_key = var.ssh_private_key
+      timeout     = "2m"
+    }
+  }
+
+  provisioner "file" {
+    content     = templatefile("${path.module}/scripts/ansible-pull-timer.tpl", { ansible_oncalendar = var.ansible_oncalendar })
+    destination = "/tmp/ansible-pull.timer"
 
     connection {
       type        = "ssh"
