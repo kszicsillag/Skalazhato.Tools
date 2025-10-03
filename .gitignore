@@ -13,3 +13,8 @@ backend.config
 *.backend
 backend.*.cfg
 backend.tf
+
+# The repository intentionally ignores local backend config files (backend.config etc.).
+# However, the empty azurerm backend stub that lives in `tf-k8ssrv/backend.tf` should
+# be tracked so CI/devs can see the repo-level backend declaration. Allow it explicitly:
+!/tf-k8ssrv/backend.tf
