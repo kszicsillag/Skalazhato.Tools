@@ -41,7 +41,7 @@ variable "allowed_cidr" {
 
 variable "principal_ids" {
   type        = map(string)
-  description = "Map of friendly id => principal object id. Example: { alice = "<objid1>", bob = "<objid2>" }. If empty defaults to { self = <current principal> }"
+  description = "Map of friendly id => principal object id. Example: { alice = '<objid1>', bob = '<objid2>' }. If empty defaults to { self = '<current principal>' }"
   default     = {}
 }
 

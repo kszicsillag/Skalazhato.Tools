@@ -10,6 +10,13 @@ locals {
   image_parts = var.image_urn != "" ? split(":", var.image_urn) : []
 }
 
+locals {
+  image_publisher = var.image_urn != "" ? local.image_parts[0] : "Canonical"
+  image_offer     = var.image_urn != "" ? local.image_parts[1] : "UbuntuServer"
+  image_sku       = var.image_urn != "" ? local.image_parts[2] : "24_04-lts"
+  image_version   = var.image_urn != "" ? local.image_parts[3] : "latest"
+}
+
 // Parse ansible_playbook_url into repo, branch, and playbook path.
 // Format: <repo_url>#<branch>#<playbook_path>
 locals {
@@ -112,26 +119,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  # Support passing a full URN (publisher:offer:sku:version). If image_urn is empty use the default Ubuntu 24.04 LTS.
-  dynamic "source_image_reference" {
-    for_each = var.image_urn != "" ? [1] : []
-    content {
-      publisher = local.image_parts[0]
-      offer     = local.image_parts[1]
-      sku       = local.image_parts[2]
-      version   = local.image_parts[3]
-    }
-  }
-
-  # Default image when no URN provided
-  dynamic "default_image_reference" {
-    for_each = var.image_urn == "" ? [1] : []
-    content {
-      publisher = "Canonical"
-      offer     = "UbuntuServer"
-      sku       = "24_04-lts"
-      version   = "latest"
-    }
+  # Use provided image URN parts when set; otherwise fall back to Ubuntu 24.04 LTS
+  source_image_reference {
+    publisher = local.image_publisher
+    offer     = local.image_offer
+    sku       = local.image_sku
+    version   = local.image_version
   }
 
   tags = var.tags
@@ -231,7 +224,7 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "remote-exec" {
-    inline = split("\n", trim(templatefile("${path.module}/scripts/provision/ansible-pull-setup.tpl", {
+    inline = split("\n", trimspace(templatefile("${path.module}/scripts/provision/ansible-pull-setup.tpl", {
       ansible_oncalendar   = var.ansible_oncalendar,
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,

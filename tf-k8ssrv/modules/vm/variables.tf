@@ -14,15 +14,15 @@ variable "resource_group_name" {
 }
 
 variable "vm_name" {
-  type        = string
+  type = string
 }
 
 variable "vm_size" {
-  type        = string
+  type = string
 }
 
 variable "admin_username" {
-  type        = string
+  type = string
 }
 
 variable "ssh_public_key" {
@@ -31,11 +31,15 @@ variable "ssh_public_key" {
 }
 
 variable "tags" {
-  type        = map(string)
+  type = map(string)
+  description = "Tags to set on created resources"
+  default = {}
 }
 
 variable "allowed_cidr" {
   type = string
+  description = "CIDR range allowed to access the VM public IP (SSH)."
+  default = "0.0.0.0/0"
 }
 
 variable "shutdown_time_zone" {
@@ -55,8 +59,6 @@ variable "image_urn" {
   description = "Optional image URN in the form publisher:offer:sku:version. If provided, module will use it to set source_image_reference."
   default     = ""
 }
-
-// Validate URN format if provided
 
 variable "enable_ansible_pull" {
   type        = bool
@@ -78,7 +80,6 @@ EOT
   default     = ""
 }
 
-
 variable "ssh_private_key" {
   type        = string
   description = "Private SSH key used to SSH to the VM for provisioning (sensitive)."
@@ -90,14 +91,3 @@ variable "ansible_oncalendar" {
   description = "systemd OnCalendar schedule string for ansible-pull (e.g. 'hourly', 'daily', or a full OnCalendar expression)."
   default     = "hourly"
 }
-variable "_image_urn_validation" {
-  type    = any
-  default = null
-  validation {
-    condition     = var.image_urn == "" || length(split(":", var.image_urn)) == 4
-    error_message = "image_urn must be empty or in the form publisher:offer:sku:version"
-  }
-}
-
-
-
