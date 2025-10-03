@@ -101,5 +101,5 @@ variable "ansible_oncalendar" {
 variable "key_vault_name" {
   type        = string
   description = "Optional name of the Key Vault to use for storing/retrieving shared secrets. If empty, a name will be generated using the VM base name (kvau-<vm_base_name>)."
-  default     = ""
+  default     = "kvau-viaumb11-vm"
 }
