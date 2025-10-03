@@ -9,13 +9,6 @@ variable "location" {
   description = "Azure region to deploy into"
   default     = "northeurope"
 }
-
-variable "lab_name" {
-  type        = string
-  description = "DevTest Lab name"
-  default     = "dtlab-viaumb11"
-}
-
 variable "vm_name" {
   type        = string
   description = "Name of the Linux VM"

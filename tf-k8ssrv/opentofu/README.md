@@ -6,6 +6,7 @@ Features
 
 - Creates a resource group, VNet and subnet
 - Creates one VM per principal with a public IP (restricted by NSG to `var.allowed_cidr`)
+- Each VM is created inside its own resource group named `${var.resource_group_name}-${short-principal-id}` so you can safely delete that RG without affecting other VMs.
 - Enables Entra (Azure AD) login using the `AADLoginForLinux` VM extension
 - Assigns each principal the `Virtual Machine User Login` role scoped to their VM so they can SSH via Entra
 
@@ -52,6 +53,8 @@ Outputs
 - `vm_names` — map[principal_id] => VM name
 - `vm_private_ips` — map[principal_id] => private IP
 - `vm_public_ips` — map[principal_id] => public IP
+
+The module implementation lives in `modules/vm/` — each instance creates a single VM and its dependencies. Outputs are returned as maps keyed by the principal id used as the module key.
 
 Security notes
 

@@ -1,21 +1,17 @@
-output "resource_group_name" {
-  value = azurerm_resource_group.rg.name
-}
-
-output "vm_name" {
-  value = azurerm_linux_virtual_machine.vm.name
+output "resource_group_names" {
+  value = { for k, m in module.vm : k => m.resource_group_name }
 }
 
 output "vm_names" {
-  value = { for k, v in azurerm_linux_virtual_machine.vm : k => v.name }
+  value = { for k, m in module.vm : k => m.vm_name }
 }
 
 output "vm_private_ips" {
-  value = { for k, v in azurerm_network_interface.nic : k => v.private_ip_address }
+  value = { for k, m in module.vm : k => m.vm_private_ip }
 }
 
 output "vm_public_ips" {
-  value = { for k, v in azurerm_public_ip.vm_public_ip : k => v.ip_address }
+  value = { for k, m in module.vm : k => m.vm_public_ip }
 }
 
 output "allowed_cidr" {
