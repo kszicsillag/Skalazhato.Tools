@@ -10,6 +10,15 @@ locals {
   image_parts = var.image_urn != "" ? split(":", var.image_urn) : []
 }
 
+// Parse ansible_playbook_url into repo, branch, and playbook path.
+// Format: <repo_url>#<branch>#<playbook_path>
+locals {
+  ansible_parts = var.ansible_playbook_url != "" ? split("#", var.ansible_playbook_url) : []
+  ansible_repo  = length(local.ansible_parts) >= 1 && local.ansible_parts[0] != "" ? local.ansible_parts[0] : ""
+  ansible_branch = length(local.ansible_parts) >= 2 && local.ansible_parts[1] != "" ? local.ansible_parts[1] : "main"
+  ansible_playbook_path = length(local.ansible_parts) >= 3 && local.ansible_parts[2] != "" ? local.ansible_parts[2] : "site.yml"
+}
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.vm_name}-vnet"
   address_space       = ["10.0.0.0/16"]
@@ -169,5 +178,43 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
 
   notification_settings {
     enabled = false
+  }
+}
+
+// Optional ansible-pull provisioner executed from Terraform controller to the VM
+resource "null_resource" "ansible_pull" {
+  count = var.enable_ansible_pull ? 1 : 0
+
+  depends_on = [azurerm_linux_virtual_machine.vm, azurerm_public_ip.vm_public_ip]
+
+  provisioner "file" {
+    content     = templatefile("${path.module}/scripts/ansible-pull-runner.tpl", {
+      ansible_repo         = local.ansible_repo,
+      ansible_branch       = local.ansible_branch,
+      ansible_playbook_path = local.ansible_playbook_path
+    })
+    destination = "/tmp/ansible-pull-runner.sh"
+
+    connection {
+      type        = "ssh"
+      host        = azurerm_public_ip.vm_public_ip.ip_address
+      user        = var.admin_username
+      private_key = var.ssh_private_key
+      timeout     = "2m"
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = split("\n", trim(templatefile("${path.module}/scripts/ansible-pull-inline.tpl", {
+      ansible_pull_cron    = var.ansible_pull_cron
+    })))
+
+    connection {
+      type        = "ssh"
+      host        = azurerm_public_ip.vm_public_ip.ip_address
+      user        = var.admin_username
+      private_key = var.ssh_private_key
+      timeout     = "2m"
+    }
   }
 }

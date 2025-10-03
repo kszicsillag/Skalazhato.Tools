@@ -57,6 +57,39 @@ variable "image_urn" {
 }
 
 // Validate URN format if provided
+
+variable "enable_ansible_pull" {
+  type        = bool
+  description = "If true, Terraform will SSH to the VM and run ansible-pull to pull configuration from a git repo."
+  default     = false
+}
+
+variable "ansible_playbook_url" {
+  type        = string
+  description = <<-EOT
+Single string that describes where to get the playbook for ansible-pull.
+Format: <repo_url>#<branch>#<playbook_path>
+Examples:
+- "https://github.com/org/repo.git#main#site.yml"
+- "git@github.com:org/repo.git#develop#playbooks/site.yml"
+
+Branch and playbook_path are optional. If omitted, branch defaults to 'main' and playbook defaults to 'site.yml'. Use an empty string to disable.
+EOT
+  default     = ""
+}
+
+
+variable "ssh_private_key" {
+  type        = string
+  description = "Private SSH key used to SSH to the VM for provisioning (sensitive)."
+  default     = ""
+}
+
+variable "ansible_pull_cron" {
+  type        = string
+  description = "Cron schedule expression for ansible-pull, e.g. '0 * * * *' for hourly."
+  default     = "0 * * * *"
+}
 variable "_image_urn_validation" {
   type    = any
   default = null

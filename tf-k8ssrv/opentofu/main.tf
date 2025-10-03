@@ -25,6 +25,10 @@ module "vm" {
   admin_username      = var.admin_username
   ssh_public_key      = data.azurerm_key_vault_secret.ssh_pubkey_data.value
   image_urn           = var.image_urn
+  enable_ansible_pull = var.enable_ansible_pull
+  ansible_playbook_url = var.ansible_playbook_url
+  ssh_private_key     = tls_private_key.generated_ssh.private_key_pem
+  ansible_pull_cron   = var.ansible_pull_cron
   tags                = var.tags
   allowed_cidr        = var.allowed_cidr
   shutdown_daily_recurrence_time = var.shutdown_daily_recurrence_time

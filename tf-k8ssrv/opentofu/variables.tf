@@ -56,3 +56,31 @@ variable "shutdown_time_zone" {
   description = "Time zone for auto-shutdown (Windows time zone name), e.g. 'UTC' or 'W. Europe Standard Time'"
   default     = "UTC"
 }
+
+variable "enable_ansible_pull" {
+  type        = bool
+  description = "Enable ansible-pull provisioning on created VMs (default false)."
+  default     = false
+}
+
+
+variable "ansible_playbook_url" {
+  type        = string
+  description = <<-EOT
+Single string that describes where to get the playbook for ansible-pull.
+Format: <repo_url>#<branch>#<playbook_path>
+Examples:
+- "https://github.com/org/repo.git#main#site.yml"
+- "git@github.com:org/repo.git#develop#playbooks/site.yml"
+
+Branch and playbook_path are optional. If omitted, branch defaults to 'main' and playbook defaults to 'site.yml'.
+EOT
+  default     = ""
+}
+
+
+variable "ansible_pull_cron" {
+  type        = string
+  description = "Cron schedule expression for ansible-pull, e.g. '0 * * * *' for hourly."
+  default     = "0 * * * *"
+}
