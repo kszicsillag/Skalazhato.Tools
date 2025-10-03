@@ -1,0 +1,10 @@
+resource_group_name = "<existing-resource-group>"
+storage_account_name = "<existingstorageacct>"
+container_name = "<existing-container>"
+key = "<path/to/state.tfstate>"
+use_azuread_auth = true
+
+# Save this file as 'backend.config' (or another name) and run:
+#   tofu init -backend-config=backend.config
+#
+# This file is intentionally not committed to git. Keep it local.

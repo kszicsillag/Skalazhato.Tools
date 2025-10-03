@@ -7,3 +7,9 @@ override.tf
 override.tf.json
 *.tfvars
 *.tfvars.json
+
+# Ignore local backend config files generated for terraform/tofu
+backend.config
+*.backend
+backend.*.cfg
+backend.tf
