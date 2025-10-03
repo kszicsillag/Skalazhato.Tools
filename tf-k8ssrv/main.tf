@@ -1,5 +1,7 @@
 provider "azurerm" {
   features {}
+  # Allow overriding subscription via variable (empty => provider will attempt to infer via az login or ARM_SUBSCRIPTION_ID)
+  subscription_id = var.subscription_id
 }
 // Determine principals list: use provided principal_ids or default to current principal
 data "azurerm_client_config" "current" {}
@@ -48,7 +50,7 @@ resource "tls_private_key" "generated_ssh" {
 }
 
 resource "azurerm_key_vault" "generic_kv" {
-  name                        = "kv-generic-${replace(var.location, "-", "")}-${substr(data.azurerm_client_config.current.object_id,0,6)}"
+  name                        = "kvau-${var.vm_base_name}"
   location                    = azurerm_resource_group.generic_rg.location
   resource_group_name         = azurerm_resource_group.generic_rg.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id

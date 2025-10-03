@@ -70,6 +70,13 @@ variable "enable_ansible_pull" {
 }
 
 
+variable "subscription_id" {
+  type        = string
+  description = "Optional subscription id to use for the azurerm provider. If empty, provider will try to infer via az login or ARM_SUBSCRIPTION_ID."
+  default     = ""
+}
+
+
 variable "ansible_playbook_url" {
   type        = string
   description = <<-EOT
