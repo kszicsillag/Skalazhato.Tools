@@ -18,7 +18,7 @@ variable "vm_base_name" {
 variable "vm_size" {
   type        = string
   description = "Size of the VM"
-  default     = "d2als-v6"
+  default     = "Standard_D2als_v6"
 }
 
 variable "admin_username" {
