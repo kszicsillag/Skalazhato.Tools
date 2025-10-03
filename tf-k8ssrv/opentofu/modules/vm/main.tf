@@ -2,26 +2,26 @@
 // Creates a resource group, vnet, subnet, nsg, public ip, nic, linux vm, AAD extension and role assignment
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_group_base}-${substr(var.principal_id,0,6)}"
+  name     = var.resource_group_name
   location = var.location
 }
 
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.resource_group_base}-${substr(var.principal_id,0,6)}-vnet"
+  name                = "${var.vm_name}-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.resource_group_base}-${substr(var.principal_id,0,6)}-subnet"
+  name                 = "${var.vm_name}-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_security_group" "vm_nsg" {
-  name                = "${var.vm_name}-${substr(var.principal_id,0,6)}-nsg"
+  name                = "${var.vm_name}-nsg"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -56,7 +56,7 @@ resource "azurerm_subnet_network_security_group_association" "subnet_nsg_assoc" 
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  name                = "${var.vm_name}-${substr(var.principal_id,0,6)}-pip"
+  name                = "${var.vm_name}-pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
@@ -64,7 +64,7 @@ resource "azurerm_public_ip" "vm_public_ip" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.vm_name}-${substr(var.principal_id,0,6)}-nic"
+  name                = "${var.vm_name}-nic"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -77,7 +77,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "${var.vm_name}-${substr(var.principal_id,0,6)}"
+  name                = var.vm_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = var.vm_size
@@ -136,4 +136,19 @@ resource "azurerm_role_assignment" "tf_vm_login" {
   principal_id       = var.principal_id
   depends_on         = [azurerm_virtual_machine_extension.aadlogin]
   name               = random_uuid.role_assignment.result
+}
+
+// Auto-shutdown schedule for the VM (applies to VMs not in DevTest Lab)
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
+  location                = azurerm_resource_group.rg.location
+  virtual_machine_id      = azurerm_linux_virtual_machine.vm.id
+  // daily recurrence time in HHmm (example '0100') and timezone
+  daily_recurrence_time   = var.shutdown_daily_recurrence_time
+  timezone                = var.shutdown_time_zone
+
+  enabled = true
+
+  notification_settings {
+    enabled = false
+  }
 }

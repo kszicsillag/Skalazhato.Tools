@@ -9,10 +9,10 @@ variable "location" {
   description = "Azure region to deploy into"
   default     = "northeurope"
 }
-variable "vm_name" {
+variable "vm_base_name" {
   type        = string
-  description = "Name of the Linux VM"
-  default     = "viaumb11-lnxvm00"
+  description = "Base name for the VM. The friendly id will be appended to form the final VM name"
+  default     = "viaumb11-lnxvm00-"
 }
 
 variable "vm_size" {
@@ -46,7 +46,19 @@ variable "allowed_cidr" {
 }
 
 variable "principal_ids" {
-  type        = list(string)
-  description = "List of principal object IDs (users/service principals) to create VMs for and assign VM login role. If empty, defaults to the principal running Terraform."
-  default     = []
+  type        = map(string)
+  description = "Map of friendly id => principal object id. Example: { alice = "<objid1>", bob = "<objid2>" }. If empty defaults to { self = <current principal> }"
+  default     = {}
+}
+
+variable "shutdown_daily_recurrence_time" {
+  type        = string
+  description = "Daily recurrence time for auto-shutdown in HHmm format, e.g. '0100'"
+  default     = "0100"
+}
+
+variable "shutdown_time_zone" {
+  type        = string
+  description = "Time zone for auto-shutdown (Windows time zone name), e.g. 'UTC' or 'W. Europe Standard Time'"
+  default     = "UTC"
 }
