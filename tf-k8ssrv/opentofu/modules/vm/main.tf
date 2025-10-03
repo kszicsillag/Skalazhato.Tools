@@ -188,7 +188,7 @@ resource "null_resource" "ansible_pull" {
   depends_on = [azurerm_linux_virtual_machine.vm, azurerm_public_ip.vm_public_ip]
 
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/ansible-pull-runner.tpl", {
+    content     = templatefile("${path.module}/scripts/runner.sh.tpl", {
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,
       ansible_playbook_path = local.ansible_playbook_path
@@ -205,7 +205,7 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/ansible-pull-service.tpl", {})
+    content     = templatefile("${path.module}/scripts/systemd/ansible-pull.service.tpl", {})
     destination = "/tmp/ansible-pull.service"
 
     connection {
@@ -218,7 +218,7 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/scripts/ansible-pull-timer.tpl", { ansible_oncalendar = var.ansible_oncalendar })
+    content     = templatefile("${path.module}/scripts/systemd/ansible-pull.timer.tpl", { ansible_oncalendar = var.ansible_oncalendar })
     destination = "/tmp/ansible-pull.timer"
 
     connection {
@@ -231,7 +231,7 @@ resource "null_resource" "ansible_pull" {
   }
 
   provisioner "remote-exec" {
-    inline = split("\n", trim(templatefile("${path.module}/scripts/ansible-pull-inline.tpl", {
+    inline = split("\n", trim(templatefile("${path.module}/scripts/provision/ansible-pull-inline.tpl", {
       ansible_oncalendar   = var.ansible_oncalendar,
       ansible_repo         = local.ansible_repo,
       ansible_branch       = local.ansible_branch,

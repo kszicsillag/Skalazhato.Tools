@@ -1,3 +1,4 @@
+```plaintext
 [Unit]
 Description=Timer for ansible-pull
 
@@ -7,3 +8,5 @@ Persistent=true
 
 [Install]
 WantedBy=timers.target
+
+```

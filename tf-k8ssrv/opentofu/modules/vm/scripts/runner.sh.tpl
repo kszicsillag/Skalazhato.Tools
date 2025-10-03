@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 set -euo pipefail
 
@@ -15,3 +16,5 @@ fi
 
 cd /var/tmp
 /usr/bin/ansible-pull -U "$ANSIBLE_REPO" -C "$ANSIBLE_BRANCH" -i localhost "$ANSIBLE_PLAYBOOK" >> "$LOGFILE" 2>&1
+
+```
