@@ -6,30 +6,30 @@ Features
 
 - Creates a resource group, VNet and subnet
 - Creates one VM per principal with a public IP (restricted by NSG to `var.allowed_cidr`)
-- Each VM is created inside its own resource group named `${var.resource_group_name}-${short-principal-id}` so you can safely delete that RG without affecting other VMs.
+- Each VM is created inside its own resource group named `rg${var.vm_base_name}<friendly-id>` (root computes `resource_group_name = "rg${var.vm_base_name}${each.key}"`) so you can safely delete that RG without affecting other VMs.
 - Enables Entra (Azure AD) login using the `AADLoginForLinux` VM extension
 - Assigns each principal the `Virtual Machine User Login` role scoped to their VM so they can SSH via Entra
 
 Prerequisites
 
 - Azure CLI installed and logged in: `az login`
-- Terraform (1.4+) or OpenTofu
-- `azurerm` and `random` providers will be downloaded during `terraform init`
+ - OpenTofu (`tofu`) or Terraform (1.4+)
+ - `azurerm` and `random` providers will be downloaded during `tofu init`
 - The principal running Terraform needs permission to create role assignments (Owner or User Access Administrator) if you want Terraform to create the role assignment for other principals. Otherwise pre-create role assignments as an admin.
 
 Quick start
 
 1. Initialize the project:
 
-   terraform init
+   tofu init
 
 2. Plan (example creating VMs for two principals):
 
-   terraform plan -out plan.tfplan -var='principal_ids=["<objid1>","<objid2>"]' -var='allowed_cidr=203.0.113.0/24'
+   tofu plan -out plan.tfplan -var='principal_ids=["<objid1>","<objid2>"]' -var='allowed_cidr=203.0.113.0/24'
 
 3. Apply:
 
-   terraform apply "plan.tfplan"
+   tofu apply "plan.tfplan"
 
 Variables of interest
 

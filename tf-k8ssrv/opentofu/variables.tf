@@ -1,9 +1,3 @@
-variable "resource_group_name" {
-  type        = string
-  description = "Name of the resource group to create"
-  default     = "devtestlab"
-}
-
 variable "location" {
   type        = string
   description = "Azure region to deploy into"
@@ -32,8 +26,6 @@ variable "admin_username" {
   description = "Admin username for the VM"
   default     = "azureuser"
 }
-
-
 
 variable "tags" {
   type        = map(string)
