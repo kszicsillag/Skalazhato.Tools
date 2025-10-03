@@ -35,7 +35,7 @@ Variables of interest
 
 - `principal_ids` (list[string]) — list of principal object IDs to create VMs for. Defaults to `[current principal]` when empty.
 - `allowed_cidr` (string) — CIDR that can reach the VM public IP on SSH. Default is `0.0.0.0/0` (change before apply!)
-- `ssh_public_key_path` (string) — path to your public SSH key used during provisioning. Note: `file()` does not expand `~`; pass an absolute path or set this variable explicitly.
+   The SSH public key used to provision VMs is read from the Key Vault secret created by this configuration. This configuration generates an SSH keypair and stores the public key into the Key Vault secret named `ssh-public-key`.
 - `vm_size` — set to an SKU that exists in your region (you used `az vm list-skus -l northeurope` to inspect available SKUs).
 
 Networking and access

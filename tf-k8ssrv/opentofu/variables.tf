@@ -12,7 +12,7 @@ variable "location" {
 variable "vm_base_name" {
   type        = string
   description = "Base name for the VM. The friendly id will be appended to form the final VM name"
-  default     = "viaumb11-lnxvm00-"
+  default     = "viaumb11-lnxvm-"
 }
 
 variable "vm_size" {
@@ -27,16 +27,12 @@ variable "admin_username" {
   default     = "azureuser"
 }
 
-variable "ssh_public_key_path" {
-  type        = string
-  description = "Path to public SSH key to provision for the VM"
-  default     = "~/.ssh/id_rsa.pub"
-}
+
 
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources"
-  default     = { project = "opentofu-demo" }
+  default     = {}
 }
 
 variable "allowed_cidr" {

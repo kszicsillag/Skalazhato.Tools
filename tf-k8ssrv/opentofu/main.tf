@@ -23,9 +23,62 @@ module "vm" {
   principal_id        = each.value
   vm_size             = var.vm_size
   admin_username      = var.admin_username
-  ssh_public_key_path = var.ssh_public_key_path
+  ssh_public_key      = data.azurerm_key_vault_secret.ssh_pubkey_data.value
   tags                = var.tags
   allowed_cidr        = var.allowed_cidr
   shutdown_daily_recurrence_time = var.shutdown_daily_recurrence_time
   shutdown_time_zone             = var.shutdown_time_zone
 }
+
+// Key Vault to hold shared secrets (in resource group 'Generic')
+resource "azurerm_resource_group" "generic_rg" {
+  name     = "Generic"
+  location = var.location
+}
+
+// Generate SSH keypair locally (tls provider) and store public key in Key Vault
+resource "tls_private_key" "generated_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "azurerm_key_vault" "generic_kv" {
+  name                        = "kv-generic-${replace(var.location, "-", "")}-${substr(data.azurerm_client_config.current.object_id,0,6)}"
+  location                    = azurerm_resource_group.generic_rg.location
+  resource_group_name         = azurerm_resource_group.generic_rg.name
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  sku_name                    = "standard"
+}
+
+// Store the SSH public key as a secret so module VMs can read it
+resource "azurerm_key_vault_secret" "ssh_pubkey" {
+  name         = "ssh-public-key"
+  value        = tls_private_key.generated_ssh.public_key_openssh
+  key_vault_id = azurerm_key_vault.generic_kv.id
+}
+
+// Data source to read the secret (module will get value from this data source)
+data "azurerm_key_vault_secret" "ssh_pubkey_data" {
+  name         = azurerm_key_vault_secret.ssh_pubkey.name
+  key_vault_id = azurerm_key_vault.generic_kv.id
+}
+
+// Use RBAC to grant the current principal Key Vault Administrator permissions
+data "azurerm_subscription" "current" {}
+
+data "azurerm_role_definition" "kv_admin" {
+  name  = "Key Vault Administrator"
+  scope = data.azurerm_subscription.current.id
+}
+
+resource "random_uuid" "kv_role_assignment" {}
+
+resource "azurerm_role_assignment" "kv_admin_assignment" {
+  scope              = azurerm_key_vault.generic_kv.id
+  role_definition_id = data.azurerm_role_definition.kv_admin.id
+  principal_id       = data.azurerm_client_config.current.object_id
+  name               = random_uuid.kv_role_assignment.result
+}
+
+// Private key is NOT written to local disk by default. Keep private keys secure and retrieve from a secure store if needed.
+
