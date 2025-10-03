@@ -55,6 +55,7 @@ resource "azurerm_key_vault" "generic_kv" {
   resource_group_name         = azurerm_resource_group.generic_rg.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   sku_name                    = "standard"
+  rbac_authorization_enabled  = "true"
 }
 
 // Store the SSH public key as a secret so module VMs can read it
@@ -62,12 +63,14 @@ resource "azurerm_key_vault_secret" "ssh_pubkey" {
   name         = "ssh-public-key"
   value        = tls_private_key.generated_ssh.public_key_openssh
   key_vault_id = azurerm_key_vault.generic_kv.id
+  depends_on   = [azurerm_role_assignment.kv_admin_assignment]
 }
 
 // Data source to read the secret (module will get value from this data source)
 data "azurerm_key_vault_secret" "ssh_pubkey_data" {
   name         = azurerm_key_vault_secret.ssh_pubkey.name
   key_vault_id = azurerm_key_vault.generic_kv.id
+  depends_on   = [azurerm_key_vault_secret.ssh_pubkey]
 }
 
 // Use RBAC to grant the current principal Key Vault Administrator permissions
